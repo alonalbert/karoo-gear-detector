@@ -3,6 +3,7 @@
   xmlns:tools="http://schemas.android.com/tools">
 
   <application
+    android:name=".GearDetectorApp"
     android:allowBackup="true"
     android:dataExtractionRules="@xml/data_extraction_rules"
     android:fullBackupContent="@xml/backup_rules"
@@ -12,10 +13,14 @@
     android:supportsRtl="true"
     android:theme="@style/Theme.KarooGearDetector"
     tools:targetApi="31">
+
+    <meta-data
+      android:name="io.hammerhead.sdk.v0.SDK_MODULE"
+      android:value="com.alonalbert.karoogeardetector.GearDetectorModule" />
+
     <activity
       android:name=".MainActivity"
       android:exported="true"
-      android:label="@string/app_name"
       android:theme="@style/Theme.KarooGearDetector">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
