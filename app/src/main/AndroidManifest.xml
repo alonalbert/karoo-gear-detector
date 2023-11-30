@@ -16,7 +16,7 @@
 
     <meta-data
       android:name="io.hammerhead.sdk.v0.SDK_MODULE"
-      android:value="com.alonalbert.karoogeardetector.GearDetectorModule" />
+      android:value="com.alonalbert.karoogeardetector.module.GearDetectorModule" />
 
     <activity
       android:name=".MainActivity"
