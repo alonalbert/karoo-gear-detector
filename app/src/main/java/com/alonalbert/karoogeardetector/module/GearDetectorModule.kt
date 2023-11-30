@@ -1,4 +1,4 @@
-package com.alonalbert.karoogeardetector
+package com.alonalbert.karoogeardetector.module
 
 import io.hammerhead.sdk.v0.Module
 import io.hammerhead.sdk.v0.ModuleFactoryI

@@ -1,5 +1,6 @@
-package com.alonalbert.karoogeardetector
+package com.alonalbert.karoogeardetector.module
 
+import com.alonalbert.karoogeardetector.BicycleConfiguration
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency
 import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
