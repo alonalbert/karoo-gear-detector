@@ -1,5 +1,7 @@
 package com.alonalbert.karoogeardetector.module
 
+import android.graphics.drawable.Drawable
+import com.alonalbert.karoogeardetector.R
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
 import io.hammerhead.sdk.v0.datatype.Dependency.SPEED
@@ -12,6 +14,8 @@ internal class DetectedGearDataType(context: SdkContext) : SdkDataType(context) 
   override val description = "Derive gear from Speed & Cadence sensors"
   override val typeId = "detected-gear"
   override val dependencies = listOf(SPEED, CADENCE)
+
+  override fun displayIcons(): List<Drawable> = listOf(context.getDrawable(R.drawable.gear) ?: throw Exception("Resource not found"))
 
   private val random = Random(System.currentTimeMillis())
 
