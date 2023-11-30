@@ -13,10 +13,9 @@ internal class DetectedGearDataType(context: SdkContext) : SdkDataType(context) 
   override val typeId = "detected-gear"
   override val dependencies = listOf(SPEED, CADENCE)
 
-  override fun newFormatter() = BuiltInFormatter.Numeric(1)
+  override fun newFormatter() = BuiltInFormatter.Numeric(2)
 
   override fun newTransformer() = DetectedGearTransformer(context)
 
   override fun newView() = BuiltInView.Numeric(context)
-
 }

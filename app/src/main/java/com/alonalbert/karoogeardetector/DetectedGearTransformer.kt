@@ -16,12 +16,19 @@ private val configuration = BicycleConfiguration(
 
 internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(context) {
   override fun onDependencyChange(timeStamp: Long, dependencies: Map<Dependency, Double>): Double {
-    val speed = dependencies[SPEED] ?: return 0.0
-    val cadence = dependencies[CADENCE] ?: return 0.0
+    val speed = dependencies[SPEED]
+    if (speed == null || speed == MISSING_VALUE) {
+      return MISSING_VALUE
+    }
+    val cadence = dependencies[CADENCE]
+    if (cadence == null || cadence == MISSING_VALUE) {
+      return MISSING_VALUE
+    }
+
 
     Timber.d("Speed: $speed m/s")
     Timber.d("Cadence: $cadence rpm")
-    val oneToOneSpeed = configuration.getWheelCircumference() * cadence * 60
+    val oneToOneSpeed = configuration.getWheelCircumference() * cadence / 60
 
     Timber.d("One to one speed: $oneToOneSpeed m/s")
 
@@ -33,4 +40,8 @@ internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(con
 }
 
 private fun BicycleConfiguration.getWheelCircumference() =
-  wheelDiameterMm + tireSizeMm * 2 * Math.PI
+  (wheelDiameterMm + tireSizeMm * 2) * Math.PI / 1000
+
+fun main() {
+  println(configuration.getWheelCircumference() * 60 / 60)
+}
