@@ -7,6 +7,7 @@ import io.hammerhead.sdk.v0.datatype.Dependency.SPEED
 import io.mockk.mockk
 import org.junit.Test
 import java.util.concurrent.TimeUnit.HOURS
+import kotlin.math.abs
 
 internal class DetectedGearTransformerTest {
   private val sdkContext =
@@ -22,18 +23,31 @@ internal class DetectedGearTransformerTest {
     val transformer = DetectedGearTransformer(sdkContext)
 
     testData.forEach {
-      it.forEachIndexed { front, list ->
-        list.forEachIndexed { rear, speedInfo ->
-          val value = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
-          assertThat(value).isEqualTo((front + 1) * 100 + rear + 1)
+      it.forEach { list ->
+        list.forEach { speedInfo ->
+          val ratio = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
+          val expectedRatio = speedInfo.front.toDouble() / speedInfo.rear
+
+          assertThat(abs((ratio / expectedRatio) - 1)).isLessThan(0.001)
         }
       }
     }
-//    testData.forEach {
-//      val value =
-//        transformer.onDependencyChange(timeStamp = 0, mapOf(SPEED to it.speed, CADENCE to it.rpm))
-//      assertThat(value).isEqualTo(it.front * 100 + it.rear)
-//    }
+  }
+
+  @Test
+  fun onDependencyChange_formatted() {
+    val transformer = DetectedGearTransformer(sdkContext)
+    val formatter = DetectedGearFormatter()
+
+    testData.forEach {
+      it.forEachIndexed { front, list ->
+        list.forEachIndexed { rear, speedInfo ->
+          val value = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
+          val formatted = formatter.formatValue(value)
+          assertThat(formatted).isEqualTo("%02d-%02d".format(front + 1, rear + 1))
+        }
+      }
+    }
   }
 
   private class SpeedInfo(val rpm: Int, val speed: Double, val front: Int, val rear: Int)

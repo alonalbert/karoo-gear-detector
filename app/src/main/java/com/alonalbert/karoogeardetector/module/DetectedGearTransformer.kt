@@ -29,7 +29,6 @@ internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(con
 
     val ratio = speed / oneToOneSpeed
     Timber.d("Ratio: $oneToOneSpeed")
-    val gear = configuration.findGearFor(ratio) ?: return MISSING_VALUE
-    return ((gear.front + 1) * 100 + (gear.rear + 1)).toDouble()
+    return ratio
   }
 }
