@@ -10,28 +10,44 @@ import java.util.concurrent.TimeUnit.HOURS
 
 internal class DetectedGearTransformerTest {
   private val sdkContext =
-    SdkContext.buildModuleContext("package", baseContext = mockk(), moduleResources = mockk(), ClassLoader.getSystemClassLoader())
+    SdkContext.buildModuleContext(
+      "package",
+      baseContext = mockk(),
+      moduleResources = mockk(),
+      ClassLoader.getSystemClassLoader()
+    )
 
   @Test
   fun onDependencyChange() {
     val transformer = DetectedGearTransformer(sdkContext)
 
     testData.forEach {
-      val value = transformer.onDependencyChange(timeStamp = 0, mapOf(SPEED to it.speed, CADENCE to it.rpm))
-      assertThat(value).isEqualTo(it.front * 100 + it.rear)
+      it.forEachIndexed { front, list ->
+        list.forEachIndexed { rear, speedInfo ->
+          val value = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
+          assertThat(value).isEqualTo((front + 1) * 100 + rear + 1)
+        }
+      }
     }
+//    testData.forEach {
+//      val value =
+//        transformer.onDependencyChange(timeStamp = 0, mapOf(SPEED to it.speed, CADENCE to it.rpm))
+//      assertThat(value).isEqualTo(it.front * 100 + it.rear)
+//    }
   }
 
-  private class SpeedInfo(rpm: Int, speed: Double, val front: Int, val rear: Int) {
-    val rpm = rpm.toDouble()
-    val speed = speed.kphToMps()
-  }
+  private class SpeedInfo(val rpm: Int, val speed: Double, val front: Int, val rear: Int)
+
+  private fun SpeedInfo.toDependencies() =
+    mapOf(SPEED to speed.kphToMps(), CADENCE to rpm.toDouble())
 
   companion object {
     /**
      * Testing data obtained from:
      *
      * https://cyclingroad.com/bicycle-gear-ratio-cadence-and-speed-calculator/
+     *
+     * Wheel 622mm, Tire 23mm
      *
      * ```
      * At 70 RPM:
@@ -64,53 +80,64 @@ internal class DetectedGearTransformerTest {
      *  ```
      */
     private val testData = listOf(
-      // Front 50
-      SpeedInfo(70, 40.06, 2, 1),
-      SpeedInfo(70, 36.73, 2, 2),
-      SpeedInfo(70, 33.90, 2, 3),
-      SpeedInfo(70, 31.48, 2, 4),
-      SpeedInfo(70, 29.38, 2, 5),
-      SpeedInfo(70, 25.92, 2, 6),
-      SpeedInfo(70, 23.19, 2, 7),
-      SpeedInfo(70, 20.99, 2, 8),
-      SpeedInfo(70, 18.36, 2, 9),
-      SpeedInfo(70, 15.74, 2, 10),
-
-      // Front 34
-      SpeedInfo(70, 27.24, 1,  1),
-      SpeedInfo(70, 24.97, 1,  2),
-      SpeedInfo(70, 23.05, 1,  3),
-      SpeedInfo(70, 21.41, 1,  4),
-      SpeedInfo(70, 19.98, 1,  5),
-      SpeedInfo(70, 17.63, 1,  6),
-      SpeedInfo(70, 15.77, 1,  7),
-      SpeedInfo(70, 14.27, 1,  8),
-      SpeedInfo(70, 12.49, 1,  9),
-      SpeedInfo(70, 10.70, 1,  10),
-
-      // Front 50
-      SpeedInfo(90, 51.51, 2, 1),
-      SpeedInfo(90, 47.22, 2, 2),
-      SpeedInfo(90, 43.59, 2, 3),
-      SpeedInfo(90, 40.47, 2, 4),
-      SpeedInfo(90, 37.77, 2, 5),
-      SpeedInfo(90, 33.33, 2, 6),
-      SpeedInfo(90, 29.82, 2, 7),
-      SpeedInfo(90, 26.98, 2, 8),
-      SpeedInfo(90, 23.61, 2, 9),
-      SpeedInfo(90, 20.24, 2, 10),
-
-      // Front 34
-      SpeedInfo(90, 35.03, 1,  1),      
-      SpeedInfo(90, 32.11, 1,  2),      
-      SpeedInfo(90, 29.64, 1,  3),      
-      SpeedInfo(90, 27.52, 1,  4),      
-      SpeedInfo(90, 25.69, 1,  5),      
-      SpeedInfo(90, 22.66, 1,  6),      
-      SpeedInfo(90, 20.28, 1,  7),      
-      SpeedInfo(90, 18.35, 1,  8),      
-      SpeedInfo(90, 16.05, 1,  9),      
-      SpeedInfo(90, 13.76, 1,  10),     
+      // 70 RPM
+      listOf(
+        // Front 34
+        listOf(
+          SpeedInfo(70, 27.24, 34, 11),
+          SpeedInfo(70, 24.97, 34, 12),
+          SpeedInfo(70, 23.05, 34, 13),
+          SpeedInfo(70, 21.41, 34, 14),
+          SpeedInfo(70, 19.98, 34, 15),
+          SpeedInfo(70, 17.63, 34, 17),
+          SpeedInfo(70, 15.77, 34, 19),
+          SpeedInfo(70, 14.27, 34, 21),
+          SpeedInfo(70, 12.49, 34, 24),
+          SpeedInfo(70, 10.70, 34, 28),
+        ),
+        // Front 50
+        listOf(
+          SpeedInfo(70, 40.06, 50, 11),
+          SpeedInfo(70, 36.73, 50, 12),
+          SpeedInfo(70, 33.90, 50, 13),
+          SpeedInfo(70, 31.48, 50, 14),
+          SpeedInfo(70, 29.38, 50, 15),
+          SpeedInfo(70, 25.92, 50, 17),
+          SpeedInfo(70, 23.19, 50, 19),
+          SpeedInfo(70, 20.99, 50, 21),
+          SpeedInfo(70, 18.36, 50, 24),
+          SpeedInfo(70, 15.74, 50, 28),
+        ),
+      ),
+      // 90 RPM
+      listOf(
+        listOf(
+          // Front 34
+          SpeedInfo(90, 35.03, 34, 11),
+          SpeedInfo(90, 32.11, 34, 12),
+          SpeedInfo(90, 29.64, 34, 13),
+          SpeedInfo(90, 27.52, 34, 14),
+          SpeedInfo(90, 25.69, 34, 15),
+          SpeedInfo(90, 22.66, 34, 17),
+          SpeedInfo(90, 20.28, 34, 19),
+          SpeedInfo(90, 18.35, 34, 21),
+          SpeedInfo(90, 16.05, 34, 24),
+          SpeedInfo(90, 13.76, 34, 28),
+        ),
+        listOf(
+          // Front 50
+          SpeedInfo(90, 51.51, 50, 11),
+          SpeedInfo(90, 47.22, 50, 12),
+          SpeedInfo(90, 43.59, 50, 13),
+          SpeedInfo(90, 40.47, 50, 14),
+          SpeedInfo(90, 37.77, 50, 15),
+          SpeedInfo(90, 33.33, 50, 17),
+          SpeedInfo(90, 29.82, 50, 19),
+          SpeedInfo(90, 26.98, 50, 21),
+          SpeedInfo(90, 23.61, 50, 24),
+          SpeedInfo(90, 20.24, 50, 28),
+        ),
+      )
     )
   }
 }
