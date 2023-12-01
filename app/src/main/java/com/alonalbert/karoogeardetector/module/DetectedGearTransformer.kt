@@ -10,7 +10,6 @@ import timber.log.Timber
 
 internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(context) {
 
-
   override fun onDependencyChange(timeStamp: Long, dependencies: Map<Dependency, Double>): Double {
     val speed = dependencies[SPEED]
     if (speed == null || speed == MISSING_VALUE) {

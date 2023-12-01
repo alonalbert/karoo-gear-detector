@@ -22,9 +22,9 @@ internal class DetectedGearDataType(context: SdkContext) : SdkDataType(context) 
   override val sampleValue: Double
     get() = (random.nextInt(1, 3) * 100 + random.nextInt(1, 11)).toDouble()
 
-  override fun newFormatter() = DetectedGearFormatter()
-
   override fun newTransformer() = DetectedGearTransformer(context)
+
+  override fun newFormatter() = DetectedGearFormatter
 
   override fun newView() = BuiltInView.Numeric(context)
 }

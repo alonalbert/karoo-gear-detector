@@ -37,13 +37,12 @@ internal class DetectedGearTransformerTest {
   @Test
   fun onDependencyChange_formatted() {
     val transformer = DetectedGearTransformer(sdkContext)
-    val formatter = DetectedGearFormatter()
 
     testData.forEach {
       it.forEachIndexed { front, list ->
         list.forEachIndexed { rear, speedInfo ->
           val value = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
-          val formatted = formatter.formatValue(value)
+          val formatted = DetectedGearFormatter.formatValue(value)
           assertThat(formatted).isEqualTo("%02d-%02d".format(front + 1, rear + 1))
         }
       }
