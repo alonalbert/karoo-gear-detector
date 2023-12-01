@@ -1,6 +1,5 @@
 package com.alonalbert.karoogeardetector.module
 
-import com.alonalbert.karoogeardetector.BicycleConfiguration.GearRatio
 import com.alonalbert.karoogeardetector.GearDetectorApp.Companion.configuration
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency
@@ -8,7 +7,6 @@ import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
 import io.hammerhead.sdk.v0.datatype.Dependency.SPEED
 import io.hammerhead.sdk.v0.datatype.transformer.SdkTransformer
 import timber.log.Timber
-import kotlin.math.abs
 
 internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(context) {
 
@@ -31,23 +29,7 @@ internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(con
 
     val ratio = speed / oneToOneSpeed
     Timber.d("Ratio: $oneToOneSpeed")
-    val gear = configuration.gearRatios.findGearFor(ratio) ?: return MISSING_VALUE
+    val gear = configuration.findGearFor(ratio) ?: return MISSING_VALUE
     return ((gear.front + 1) * 100 + (gear.rear + 1)).toDouble()
   }
-
-
-  private fun List<GearRatio>.findGearFor(ratio: Double): GearRatio? {
-    var bestMatch: GearRatio? = null
-    var bestMatchScore = Double.MAX_VALUE
-    forEach {
-      val score = abs(it.ratio - ratio) / it.ratio
-      if (score > bestMatchScore) {
-        return bestMatch
-      }
-      bestMatchScore = score
-      bestMatch = it
-    }
-    return bestMatch
-  }
-
 }
