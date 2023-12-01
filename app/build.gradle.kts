@@ -59,6 +59,7 @@ dependencies {
   implementation(libs.androidx.material3)
   implementation(libs.karoo.sdk)
   implementation(libs.timber)
+  implementation(libs.gson)
 
   testImplementation(libs.mockk)
   testImplementation(libs.junit)

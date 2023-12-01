@@ -1,5 +1,6 @@
 package com.alonalbert.karoogeardetector.module
 
+import com.alonalbert.karoogeardetector.BicycleConfiguration
 import com.google.common.truth.Truth.assertThat
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
@@ -8,6 +9,13 @@ import io.mockk.mockk
 import org.junit.Test
 import java.util.concurrent.TimeUnit.HOURS
 import kotlin.math.abs
+
+private val configuration = BicycleConfiguration(
+  frontGears = listOf(34, 50),
+  rearGears = listOf(11, 12, 13, 14, 15, 17, 19, 21, 24, 28),
+  wheelDiameterMm = 622,
+  tireSizeMm = 23,
+)
 
 internal class DetectedGearTransformerTest {
   private val sdkContext =
@@ -20,7 +28,7 @@ internal class DetectedGearTransformerTest {
 
   @Test
   fun onDependencyChange() {
-    val transformer = DetectedGearTransformer(sdkContext)
+    val transformer = DetectedGearTransformer(sdkContext) { configuration }
 
     testData.forEach {
       it.forEach { list ->
@@ -36,13 +44,14 @@ internal class DetectedGearTransformerTest {
 
   @Test
   fun onDependencyChange_formatted() {
-    val transformer = DetectedGearTransformer(sdkContext)
+    val transformer = DetectedGearTransformer(sdkContext) { configuration }
+    val formatter = DetectedGearFormatter(sdkContext) { configuration }
 
     testData.forEach {
       it.forEachIndexed { front, list ->
         list.forEachIndexed { rear, speedInfo ->
           val value = transformer.onDependencyChange(timeStamp = 0, speedInfo.toDependencies())
-          val formatted = DetectedGearFormatter.formatValue(value)
+          val formatted = formatter.formatValue(value)
           assertThat(formatted).isEqualTo("%02d-%02d".format(front + 1, rear + 1))
         }
       }

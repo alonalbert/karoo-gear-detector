@@ -24,7 +24,7 @@ internal class DetectedGearDataType(context: SdkContext) : SdkDataType(context) 
 
   override fun newTransformer() = DetectedGearTransformer(context)
 
-  override fun newFormatter() = DetectedGearFormatter
+  override fun newFormatter() = DetectedGearFormatter(context)
 
   override fun newView() = BuiltInView.Numeric(context)
 }

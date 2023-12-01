@@ -1,6 +1,7 @@
 package com.alonalbert.karoogeardetector.module
 
-import com.alonalbert.karoogeardetector.GearDetectorApp.Companion.configuration
+import com.alonalbert.karoogeardetector.BicycleConfiguration
+import com.alonalbert.karoogeardetector.getConfiguration
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency
 import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
@@ -8,7 +9,10 @@ import io.hammerhead.sdk.v0.datatype.Dependency.SPEED
 import io.hammerhead.sdk.v0.datatype.transformer.SdkTransformer
 import timber.log.Timber
 
-internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(context) {
+internal class DetectedGearTransformer(
+  context: SdkContext,
+  private val getConfiguration: () -> BicycleConfiguration = { context.getConfiguration() },
+) : SdkTransformer(context) {
 
   override fun onDependencyChange(timeStamp: Long, dependencies: Map<Dependency, Double>): Double {
     val speed = dependencies[SPEED]
@@ -22,7 +26,7 @@ internal class DetectedGearTransformer(context: SdkContext) : SdkTransformer(con
 
     Timber.d("Speed: $speed m/s")
     Timber.d("Cadence: $cadence rpm")
-    val oneToOneSpeed = configuration.wheelCircumference * cadence / 60
+    val oneToOneSpeed = getConfiguration().wheelCircumference * cadence / 60
 
     Timber.d("One to one speed: $oneToOneSpeed m/s")
 
