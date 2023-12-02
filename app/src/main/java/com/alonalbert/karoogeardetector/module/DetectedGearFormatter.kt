@@ -1,14 +1,11 @@
 package com.alonalbert.karoogeardetector.module
 
 import com.alonalbert.karoogeardetector.BicycleConfiguration
-import com.alonalbert.karoogeardetector.getConfiguration
-import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.formatter.BuiltInFormatter
 import io.hammerhead.sdk.v0.datatype.formatter.SdkFormatter
 
 internal class DetectedGearFormatter(
-  private val context: SdkContext,
-  private val getConfiguration: () -> BicycleConfiguration = { context.getConfiguration() },
+  private val getConfiguration: () -> BicycleConfiguration,
 ) : SdkFormatter() {
   override fun formatValue(value: Double): String {
     val gear = getConfiguration().findGearFor(value)

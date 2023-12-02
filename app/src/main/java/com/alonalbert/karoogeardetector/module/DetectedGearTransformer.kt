@@ -1,7 +1,6 @@
 package com.alonalbert.karoogeardetector.module
 
 import com.alonalbert.karoogeardetector.BicycleConfiguration
-import com.alonalbert.karoogeardetector.getConfiguration
 import io.hammerhead.sdk.v0.SdkContext
 import io.hammerhead.sdk.v0.datatype.Dependency
 import io.hammerhead.sdk.v0.datatype.Dependency.CADENCE
@@ -11,7 +10,7 @@ import timber.log.Timber
 
 internal class DetectedGearTransformer(
   context: SdkContext,
-  private val getConfiguration: () -> BicycleConfiguration = { context.getConfiguration() },
+  private val getConfiguration: () -> BicycleConfiguration,
 ) : SdkTransformer(context) {
 
   override fun onDependencyChange(timeStamp: Long, dependencies: Map<Dependency, Double>): Double {
